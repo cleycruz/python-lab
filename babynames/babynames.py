@@ -41,7 +41,39 @@ def extract_names(filename):
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
   # +++your code here+++
-  return
+  # print("Hello mundo")
+  lista = []
+  with open(filename ,'r') as f:
+    archivo = f.read()
+    #print(archivo)
+    matchyear = re.search(r'Popularity in (\b\d{4}\b)', archivo)
+    if matchyear:
+      year = matchyear.group(1)
+      #print(year)
+
+      match_names = re.findall('<tr align="right"><td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>',archivo)
+      #print(match_names)
+
+      diccionario_nombres = {} 
+
+      for ranking, hombre, mujer in  match_names:        
+        if hombre not in diccionario_nombres:
+          diccionario_nombres[hombre] = ranking
+        if mujer not in diccionario_nombres:
+          diccionario_nombres[mujer] = ranking
+        
+      #print(diccionario_nombres)
+
+      lista_nombres_ordenados = sorted(diccionario_nombres.keys())
+    
+      #print(lista_nombres_ordenados)
+
+      lista = [year]    
+      for nombre in lista_nombres_ordenados:
+        lista.append(f'{nombre} {diccionario_nombres[nombre]}')   
+
+    #print(lista)
+  return lista
 
 
 def main():
@@ -60,9 +92,20 @@ def main():
     summary = True
     del args[0]
 
+
   # +++your code here+++
   # For each filename, get the names, then either print the text output
   # or write it to a summary file
+  for filename in args:
+    nombres = extract_names(filename)
+
+    nombres_finales = '\n' .join(nombres) + '\n'
+
+    if summary:
+      with open(filename + '.summary', 'w') as out:
+        out.write(nombres_finales + '\n')
+    else:
+      print(nombres_finales)
 
 if __name__ == '__main__':
   main()
